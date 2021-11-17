@@ -69,7 +69,7 @@ string promptPass(vector<string> *args){
     if(args->operator[](arg_i)[0] == '-'){
       switch(args->operator[](arg_i)[1]){
         
-        //untuk masukkan/ganti password yang sebelumnya dipakai
+        //to save/change the main password
         case 'm':{
           string str = "";
           for(int str_i = 2; str_i < args->operator[](arg_i).length(); str_i++)
@@ -81,7 +81,7 @@ string promptPass(vector<string> *args){
     }
   }
 
-  cout << "Masukkan domain: " << flush;
+  cout << "Enter domain: " << flush;
   string anchorstr = "";
   char c = 0;
   while((c = getchar()) != '\n')

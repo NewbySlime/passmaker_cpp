@@ -154,9 +154,33 @@ string promptPass(vector<string> *args){
   int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow){
     vector<string> str;
     splitarg(&str, pCmdLine);
-    string newpass = promptPass(&str);
-    copyToClipboard(newpass);
-    cout << "Copied to clipboard." << endl;
+    bool doloop = true;
+    while(doloop){
+      string newpass = promptPass(&str);
+      cout << "Write 'c' to copy it to clipboard.\nWrite 'r' to reuse the program.\nWrite 'q' to quit the program." << endl;
+
+      bool doloop1 = true;
+      while(doloop1){
+        string instr;
+        getline(cin, instr);
+        switch(instr[0]){
+          case 'r':{
+            doloop1 = false;
+            break;
+          }
+
+          case 'q':{
+            doloop = doloop1 = false;
+            break;
+          }
+
+          case 'c':{
+            copyToClipboard(newpass);
+            cout << "Password copied to clipboard." << endl;
+          }
+        }
+      }
+    }
     return 0;
   }
 

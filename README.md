@@ -30,4 +30,4 @@ The resulting password will be put in your clipboard.
 For now, I have another projects to do, so this project will be ignored temporarily.
 
 ## License
-Licensed by myself.
+Licensed by myself just now.

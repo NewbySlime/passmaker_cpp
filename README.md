@@ -1,6 +1,9 @@
-# SlimePass
+## Note
+I made this in 1 day and I only have 1 years of experience, feel free to critique my spaghetti of a code.
 
-SlimePass is a program to make an encrypted password based on the current domain for the password and the original password.
+# passmaker
+
+passmaker is a program to make an encrypted password based on the current domain for the password and the original password.
 This is just a password tool that I make just for fun and the sake of my fascination.
 Might not be perfect, use it on your own risk.
 
@@ -30,4 +33,4 @@ The resulting password will be put in your clipboard.
 For now, I have another projects to do, so this project will be ignored temporarily.
 
 ## License
-Licensed by myself just now.
+[GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/#)

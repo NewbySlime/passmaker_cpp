@@ -1,0 +1,4 @@
+Encryption math (for every c1 in str1 with nested for every c2 in str2)
+  (pow2(c1*c2) +cr) % CHAR_TOUSE.len
+
+  cr: current char in res

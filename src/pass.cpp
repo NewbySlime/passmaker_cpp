@@ -1,4 +1,5 @@
 #include <iostream>
+#include <conio.h>
 #include <fstream>
 #include <cstring>
 #include <vector>
@@ -22,7 +23,14 @@ template<typename t> void fillBuffer(t* buffer, int len, t what){
     buffer[str_i] = what;
 }
 
-//strlength is a length of the password
+/**
+ * strlength is a length of the password
+ * 
+ * Encryption math (for every c1 in str1 with nested for every c2 in str2)
+    (pow2(c1*c2) +cr) % CHAR_TOUSE.len
+
+    cr: current char in res
+ */
 string encryptString(string str, string base, int strlength){
   char buffer[strlength+1];
   fillBuffer(buffer, strlength, ctousestr[0]);
@@ -78,6 +86,21 @@ string promptPass(vector<string> *args){
           storePass(str);
         }
       }
+    }
+  }
+  
+  {
+    ifstream fs;
+    fs.open(PASSLOCATION, ios::openmode::_S_ate);
+    if(fs.tellg() <= 0){
+      cout << "\nYour main password isn't stored yet.\nWrite your password here: " << flush;
+      string pass = "";
+      char c = '\0';
+      while((c = _getch()) != '\r' && c != '\n')
+        pass += c;
+      
+      storePass(pass);
+      cout << endl;
     }
   }
 
@@ -157,13 +180,12 @@ string promptPass(vector<string> *args){
     bool doloop = true;
     while(doloop){
       string newpass = promptPass(&str);
-      cout << "Write 'c' to copy it to clipboard.\nWrite 'r' to reuse the program.\nWrite 'q' to quit the program." << endl;
+      cout << "Click 'c' to copy it to clipboard.\nClick 'r' to reuse the program.\nClick 'q' to quit the program.\n" << endl;
 
       bool doloop1 = true;
       while(doloop1){
-        string instr;
-        getline(cin, instr);
-        switch(instr[0]){
+        char c = _getch();
+        switch(c){
           case 'r':{
             doloop1 = false;
             break;

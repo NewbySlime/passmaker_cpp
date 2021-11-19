@@ -1,7 +1,7 @@
 ## Note
 I made this in 1 day and I only have 1 years of experience, feel free to critique my spaghetti of a code.
 
-And if 15 chars of password isn't enough for you, just change the ENCRYPTEDSTRMAX macros and compile it.
+And if 15 chars of password isn't enough for you, just change the ENCRYPTEDSTRMAX macro and compile it.
 
 # passmaker
 

@@ -7,6 +7,7 @@ And if 15 chars of password isn't enough for you, just change the ENCRYPTEDSTRMA
 
 passmaker is a program to make an encrypted password based on the current domain and your original main password.
 This is just a password tool that I make just for fun and the sake of my fascination.
+
 Might not be perfect, use it on your own risk.
 
 ## Compilation

@@ -9,9 +9,6 @@ passmaker is a program to make an encrypted password based on the current domain
 This is just a password tool that I make just for fun and the sake of my fascination.
 Might not be perfect, use it on your own risk.
 
-It's a simple one, there's a possibility for me to develop this program.
-(might be one for linux!)
-
 ## Compilation
 
 Compile the source code with your trusty c++ compiler.

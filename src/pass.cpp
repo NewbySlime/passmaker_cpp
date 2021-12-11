@@ -11,17 +11,33 @@ using namespace std;
 #define DEFAULTPASS {(char)1}
 #define ENCRPTEDSTRMAX 15
 
+#define C_COPYPASS 'c'
+#define C_REUSEPASS 'r'
+#define C_QUIT 'q'
+
 #define CHAR_TOUSE "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define STR_PROMPT "Click 'c' to copy it to clipboard.\nClick 'r' to reuse the program.\nClick 'q' to quit the program.\n"
+/*
+#undef _WIN32
+#define __linux__
+#define __TERMUX__
+*/
 
 string ctousestr = CHAR_TOUSE;
 
 void splitarg(vector<string> *args, char* str);
-void copyToClipboard(string str);
+void copyToClipboard(string &str);
 
 template<typename t> void fillBuffer(t* buffer, int len, t what){
   for(int str_i = 0; str_i < len; str_i++)
     buffer[str_i] = what;
 }
+
+template<typename type, typename casttype = type>
+  void ArrayToVector(type *arrayptr, int arraysize, vector<casttype> *newvectorptr){
+    for(int i = 0; i < arraysize; i++)
+      newvectorptr->insert(newvectorptr->end(), (casttype)arrayptr[i]);
+  }
 
 /**
  * strlength is a length of the password
@@ -114,43 +130,72 @@ string promptPass(vector<string> *args){
   return encryptString(anchorstr, epass, ENCRPTEDSTRMAX);
 }
 
+void splitarg(vector<string> *vstr, char *str){
+  int str_i = 0;
+  bool stillspace = false, doloop = true;
+  string tmp = "";
+  while(doloop){
+    switch(str[str_i]){
+      case ' ':{
+        if(!stillspace){
+          vstr->push_back(tmp);
+          tmp = "";
+        }
+        
+        stillspace = true;
+        break;
+      }
+
+      case '\0':{
+        vstr->push_back(tmp);
+        doloop = false;
+        break;
+      }
+
+      default:{
+        tmp += str[str_i];
+        stillspace = false;
+        break;
+      }
+    }
+
+    str_i++;
+  }
+}
+
+void domain(vector<string> *str){
+    bool doloop = true;
+    while(doloop){
+      string newpass = promptPass(str);
+      cout << STR_PROMPT << endl;
+
+      bool doloop1 = true;
+      while(doloop1){
+        char c = _getch();
+        switch(c){
+          case 'r':{
+            doloop1 = false;
+            break;
+          }
+
+          case 'q':{
+            doloop = doloop1 = false;
+            break;
+          }
+
+          case 'c':{
+            copyToClipboard(newpass);
+            cout << "Password copied to clipboard." << endl;
+          }
+        }
+      }
+    }
+}
+
 #if defined(_WIN32)
   #include <windows.h>
 
-  void splitarg(vector<string> *vstr, LPSTR str){
-    int str_i = 0;
-    bool stillspace = false, doloop = true;
-    string tmp = "";
-    while(doloop){
-      switch(str[str_i]){
-        case ' ':{
-          if(!stillspace){
-            vstr->push_back(tmp);
-            tmp = "";
-          }
-          
-          stillspace = true;
-          break;
-        }
-
-        case '\0':{
-          vstr->push_back(tmp);
-          doloop = false;
-          break;
-        }
-
-        default:{
-          tmp += str[str_i];
-          stillspace = false;
-          break;
-        }
-      }
-
-      str_i++;
-    }
-  }
-
-  void copyToClipboard(string str){
+  void copyToClipboard(string &str){
     HGLOBAL hg;
     if(!OpenClipboard(NULL)){
       cerr << "Clipboard cannot be opened." << endl;
@@ -177,35 +222,45 @@ string promptPass(vector<string> *args){
   int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow){
     vector<string> str;
     splitarg(&str, pCmdLine);
-    bool doloop = true;
-    while(doloop){
-      string newpass = promptPass(&str);
-      cout << "Click 'c' to copy it to clipboard.\nClick 'r' to reuse the program.\nClick 'q' to quit the program.\n" << endl;
-
-      bool doloop1 = true;
-      while(doloop1){
-        char c = _getch();
-        switch(c){
-          case 'r':{
-            doloop1 = false;
-            break;
-          }
-
-          case 'q':{
-            doloop = doloop1 = false;
-            break;
-          }
-
-          case 'c':{
-            copyToClipboard(newpass);
-            cout << "Password copied to clipboard." << endl;
-          }
-        }
-      }
-    }
+    domain(&str);
     return 0;
   }
 
 #elif defined(__linux__)
+  #define filename_tmp ".passtmp.tmp"
+  #define CLIP_CMD "xclip -sel clip"
+
+  #if defined(__TERMUX__)
+    #define CLIP_CMD "termux-clipboard-set"
+  #endif
+
+  void initTmpFile(){
+    ofstream ofs;
+    ofs.open(filename_tmp);
+    ofs.close();
+  }
+
+  void deleteTmpFile(){
+    string command = string("rm ") + filename_tmp;
+    system(command.c_str());
+  }
+
+  void copyToClipboard(string &str){
+    ofstream ofs;
+    ofs.open(filename_tmp, ofs.trunc);
+    ofs.write(str.c_str(), str.size());
+    ofs.close();
+
+    string command = string("cat ") + filename_tmp + " | " + CLIP_CMD;
+    system(command.c_str());
+  }
+
+  int main(int argi, char* argcs[]){
+    initTmpFile();
+    vector<string> strv;
+    ArrayToVector<char*, string>(argcs, argi, &strv);
+    domain(&strv);
+    deleteTmpFile();
+  }
 
 #endif

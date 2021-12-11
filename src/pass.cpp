@@ -16,11 +16,6 @@ using namespace std;
 
 #define CHAR_TOUSE "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define STR_PROMPT "Click 'c' to copy it to clipboard.\nClick 'r' to reuse the program.\nClick 'q' to quit the program.\n"
-/*
-#undef _WIN32
-#define __linux__
-#define __TERMUX__
-*/
 
 string ctousestr = CHAR_TOUSE;
 

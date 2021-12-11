@@ -18,6 +18,16 @@ Compile the source code with your trusty c++ compiler.
 g++ ./src/pass.cpp
 ```
 
+If the program want to be compiled for android with termux cli, then install termux:api on f-droid and install `termux-api` on pkg.
+And compile it with `__TERMUX__` macro.
+
+```bash
+g++ ./src/pass.cpp -D__TERMUX__
+```
+
+For Linux, it's as the same as usual. But for Linux, I haven't tested it.
+But if you want to try, make sure `xclip` available first. Since the program rely on `xclip` to use the clipboard.
+
 ## Usage
 
 ```bash

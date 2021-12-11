@@ -1,5 +1,4 @@
 #include <iostream>
-#include <conio.h>
 #include <fstream>
 #include <cstring>
 #include <vector>
@@ -27,6 +26,7 @@ string ctousestr = CHAR_TOUSE;
 
 void splitarg(vector<string> *args, char* str);
 void copyToClipboard(string &str);
+int _getch();
 
 template<typename t> void fillBuffer(t* buffer, int len, t what){
   for(int str_i = 0; str_i < len; str_i++)
@@ -67,7 +67,7 @@ string encryptString(string str, string base, int strlength){
 
 void storePass(string pass){
   ofstream ofs;
-  ofs.open(PASSLOCATION, ios::openmode::_S_trunc);
+  ofs.open(PASSLOCATION, ofs.trunc);
   string e_pass = encryptString(pass, string(DEFAULTPASS), pass.length());
 
   ofs.write(e_pass.c_str(), e_pass.length());
@@ -77,7 +77,7 @@ void storePass(string pass){
 string getEPass(){
   string res = "";
   ifstream ifs;
-  ifs.open(PASSLOCATION, ios::openmode::_S_bin);
+  ifs.open(PASSLOCATION, ifs.binary);
   char c = 0;
   ifs.read(&c, 1);
   while(!ifs.eof()){
@@ -107,7 +107,7 @@ string promptPass(vector<string> *args){
   
   {
     ifstream fs;
-    fs.open(PASSLOCATION, ios::openmode::_S_ate);
+    fs.open(PASSLOCATION, fs.ate);
     if(fs.tellg() <= 0){
       cout << "\nYour main password isn't stored yet.\nWrite your password here: " << flush;
       string pass = "";
@@ -193,6 +193,7 @@ void domain(vector<string> *str){
 }
 
 #if defined(_WIN32)
+  #include <conio.h>
   #include <windows.h>
 
   void copyToClipboard(string &str){
@@ -233,6 +234,19 @@ void domain(vector<string> *str){
   #if defined(__TERMUX__)
     #define CLIP_CMD "termux-clipboard-set"
   #endif
+
+  #include <termios.h>
+  static struct termios old, current;
+
+  int _getch(){
+    tcgetattr(0, &old);
+    current = old;
+    current.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(0, TCSANOW, &current);
+    int key = getchar();
+    tcsetattr(0, TCSANOW, &old);
+    return key;
+  }
 
   void initTmpFile(){
     ofstream ofs;
